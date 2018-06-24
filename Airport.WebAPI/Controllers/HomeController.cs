@@ -12,7 +12,7 @@ namespace Airport.WebAPI.Controllers
         {
             ViewBag.Title = "Home Page";
 
-            return View();
+            return Redirect("http://localhost:64648/api/AirportSchedule");
         }
     }
 }

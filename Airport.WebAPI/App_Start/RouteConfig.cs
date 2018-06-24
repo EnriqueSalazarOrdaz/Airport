@@ -15,8 +15,8 @@ namespace Airport.WebAPI
 
             routes.MapRoute(
                 name: "Default",
-                url: "api/{controller}/{action}/{id}",
-                defaults: new { controller = "AirportSchedule", action = "GetAllSchedulePlan", id = UrlParameter.Optional }
+                url: "{controller}/{action}/{id}",
+                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
             );
         }
     }
