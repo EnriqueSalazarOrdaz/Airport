@@ -1,0 +1,197 @@
+﻿@model IEnumerable<Airport.Models.SchedulePlan>
+
+<script type="text/javascript">
+    window.onload = function () {
+        let data = @Html.Raw(Json.Encode(Model));
+        debugger;
+        let dataArr = [];
+        let labelArr = [];
+        let backgroundColorArr = [];
+        for (var i = 0; i < data.length; i++){
+            dataArr.push(
+                [
+                    new Date((new Date()).getFullYear(), 0, 0, data[i]["Depart"]["Hours"], data[i]["Depart"]["Minutes"]),
+                    new Date((new Date()).getFullYear(), 0, 0, data[i]["Arrives"]["Hours"], data[i]["Arrives"]["Minutes"])
+                ]
+            );
+            let airline = data[i]["Airline"]
+            labelArr.push(airline);
+
+            if (airline == "JetBlue") {
+                backgroundColorArr.push(window.chartColors.blueCian);
+            } else if (airline == "United") {
+                backgroundColorArr.push(window.chartColors.deepBlue);
+            } else if (airline == "Delta") {
+                backgroundColorArr.push(window.chartColors.orange);
+            } else if (airline == "Continental") {
+                backgroundColorArr.push(window.chartColors.grey);
+            } else {
+                backgroundColorArr.push(window.chartColors.random);
+            }
+            
+        }
+        var config = {
+            type: 'timeline',
+            data: {
+                labels: labelArr,
+                datasets: [{
+                    backgroundColor: backgroundColorArr,
+                    data: dataArr
+                }]
+            },
+            options: {
+                scales: {
+                    xAxes: [{
+                        stacked: true,
+                    }],
+                    yAxes: [{
+                        stacked: true,
+                        categoryPercentage: 0.7,
+                        barPercentage: 1
+                    }]
+                }
+            }
+        };
+        var ctx = document.getElementById("canvas").getContext("2d");
+        new Chart(ctx, config);
+    }
+</script>
+
+
+@if (Model != null)
+{
+<div class="row">
+    <div class="col-xs-6">
+        <table class="table">
+            <tr>
+                <th>
+
+                </th>
+                <th>
+
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Depart)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Arrives)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LayoverCity)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LayoverTime)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Airline)
+                </th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.ActionLink("Select", "Detail", "Home", new { id=item.Id}, new { @class = "btn btn-info btn-large" })
+                    </td>
+                    <td>
+                        $@Html.DisplayFor(modelItem => item.Price)
+                        @Html.DisplayFor(modelItem => item.FromCity)-->@Html.DisplayFor(modelItem => item.ToCity)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Depart)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Arrives)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LayoverCity)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LayoverTime)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Airline)
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+    <div class="col-xs-6">
+        <div style="width: 100%">
+            <canvas id="canvas"></canvas>
+        </div>
+    </div>
+</div>
+}
+
+
+<script>
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    window.chartColors = {
+        red: 'rgb(255, 99, 132)',
+        orange: 'rgb(255, 140, 0)',
+        yellow: 'rgb(255, 205, 86)',
+        green: 'rgb(75, 192, 192)',
+        blue: 'rgb(54, 162, 235)',
+        purple: 'rgb(153, 102, 255)',
+        grey: 'rgb(112,128,144)',
+        random: 'rgb(' + getRandomInt(1, 255) + ',' + getRandomInt(1, 255) + ',' + getRandomInt(1, 255) + ')',
+        blueCian: 'rgb(0,0,230)',
+        deepBlue: 'rgb(0,0,138)',
+
+    };
+
+    Chart.defaults.timeline = Chart.defaults.horizontalBar;
+    Chart.controllers.timeline = Chart.controllers.horizontalBar.extend({
+        initialize: function () {
+            return Chart.controllers.bar.prototype.initialize.apply(this, arguments);
+        }
+    });
+
+    Chart.pluginService.register({
+        beforeInit: function (chart) {
+            chart["boxes"][1]["options"]["display"] = false;
+            if (chart.config.type === 'timeline') {
+                var config = chart.config;
+
+                var data = config.data.datasets[0].data;
+
+                var min = new Date((new Date()).getFullYear(), 0, 0, 6, 0);
+                var max = new Date((new Date()).getFullYear(), 0, 0, 12, 00);
+
+                function toDate(date) {
+                    var date = new Date(date);
+                    var hour = date.getHours();
+                    var tt = ' AM';
+                    if (hour === 0)
+                        hour = 12;
+                    else if (hour === 12)
+                        tt = ' PM';
+                    else if (hour > 12)
+                        hour = hour - 12, tt = ' PM';
+                    return hour + ':' + ('0' + date.getMinutes()).replace(/.*(.{2})$/, '$1') + tt;
+                }
+
+                config.options.scales.xAxes[0].ticks.callback = toDate;
+                config.options.scales.xAxes[0].ticks.min = min;
+                config.options.scales.xAxes[0].ticks.max = max;
+                config.options.scales.xAxes[0].ticks.fixedStepSize = 1000 * 60 * 60;
+                config.options.scales.xAxes[0].ticks.minRotation = 90
+
+                
+                config.data.datasets.unshift({
+                    backgroundColor: 'rgba(0, 0, 0, 0)',
+                    data: data.map(function (e) {
+                        return e[0];
+                    })
+                });
+
+                config.data.datasets[1].data = data.map(function (e) {
+                    return e[1] - e[0];
+                });
+            }
+        }
+    });
+</script>

@@ -1,0 +1,81 @@
+﻿@model Airport.Models.SchedulePlan
+
+@{
+    ViewBag.Title = "Detail";
+}
+
+<h2>Detail</h2>
+
+<div>
+    <h4>SchedulePlan</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.FromCity)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FromCity)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ToCity)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ToCity)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Depart)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Depart)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Arrives)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Arrives)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.LayoverCity)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.LayoverCity)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.LayoverTime)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.LayoverTime)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Price)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Price)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Airline)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Airline)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Back to List", "GetFlights", "Home")
+</p>
